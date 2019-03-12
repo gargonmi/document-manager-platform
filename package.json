@@ -1,0 +1,24 @@
+{
+  "name": "proyecto2",
+  "version": "1.0.0",
+  "description": "Documentation security manager",
+  "main": "./js/index.js",
+  "dependencies": {
+    "bootstrap": "4.3.1",
+    "webpack": "4.29.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gargonmi/experiments.git"
+  },
+  "author": "Miguel Angel Garcia Gonzalez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gargonmi/experiments/issues"
+  },
+  "homepage": "https://github.com/gargonmi/experiments#readme"
+}
