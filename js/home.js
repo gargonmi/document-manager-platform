@@ -1,3 +1,4 @@
+
 import { View } from './view.js';
 
 export class Home extends View {
@@ -8,7 +9,7 @@ export class Home extends View {
     
     render () {
         return `
-        <p> Hola mundo!!! </p>
+        <p>Hola mundo!!!</p>
         `
     }
 }

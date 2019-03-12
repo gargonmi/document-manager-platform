@@ -1,16 +1,21 @@
-
-
-//import 'bootstrap';
-import { View } from './view.js';
 import { Home } from './home.js';
+import { ViewManager } from './view-manager.js';
 
-let home = new Home();
+let home1 = new Home();
+let home2 = new Home();
 
-const domNode = document.querySelector('.section-container');
+let viewManager = new ViewManager({
+    nav: '.app-nav',
+    content: '.app-content',
+    footer: '.app-footer'
+})
 
-home.mount(domNode);
+viewManager.showView(home1, 'nav');
+viewManager.showView(home2, 'content');
 
 
 
-// spa.addView(view, '.section-container')
+
+
+
 
