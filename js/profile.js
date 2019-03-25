@@ -1,17 +1,16 @@
 
 import { View } from './view.js';
 
-export class Home extends View {
+export class Profiles extends View {
 
-    constructor (miVar) {
+    constructor () {
         super();
-       
     }
     
     render () {
         return `
         <div class="content">
-            <div><p><h2> DASHBOARD </h2></p></div>
+            <div><p><h2> PERFILES </h2></p></div>
             <div><p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
                     Nostrum autem nam necessitatibus dicta, dolor iure tempora, 
                     quaerat rem sint optio ipsum voluptatibus, perspiciatis temporibus
