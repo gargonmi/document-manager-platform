@@ -66,7 +66,6 @@ export class Mydocs extends View {
             
             ]
 
-            this.changeName();
     }
     
     render () {
@@ -104,14 +103,17 @@ export class Mydocs extends View {
                 </tr>
               </tfoot>
         </table>
+        <button id="mydocs-button">Cambiar nombre</button>
         </div>
         `
     }
 
+    addEventListeners () {
+        this.query('#mydocs-button').addEventListener('click', () => this.changeName());
+    }
+
     changeName () {
-        setTimeout(() => {
-            this.userName = 'Miguel';
-            this.refreshView();
-        }, 10000)
+        this.userName = 'Miguel';
+        this.refreshView();
     }
 }

@@ -5,18 +5,30 @@ export class View {
         }
     }
 
+    query (selector) {
+        return this._domNode.querySelector(selector);
+    }
+
     mount (domNode) {
        const html = this.render();
        
        this._domNode = domNode;
 
        domNode.innerHTML = html;
+
+       if (typeof this.addEventListeners === 'function') {
+           this.addEventListeners();
+       }
     }
 
     refreshView () {
         const html = this.render();
 
         this._domNode.innerHTML = html;
+
+        if (typeof this.addEventListeners === 'function') {
+            this.addEventListeners();
+        }
     }
 
 }
