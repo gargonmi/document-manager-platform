@@ -7,6 +7,7 @@ export class Header extends View {
 
     constructor () {
         super();
+        this.miVar = ''
     }
     
     render () {

@@ -7,8 +7,16 @@ export class View {
 
     mount (domNode) {
        const html = this.render();
+       
+       this._domNode = domNode;
 
        domNode.innerHTML = html;
+    }
+
+    refreshView () {
+        const html = this.render();
+
+        this._domNode.innerHTML = html;
     }
 
 }

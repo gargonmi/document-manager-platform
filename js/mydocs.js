@@ -5,7 +5,8 @@ export class Mydocs extends View {
 
     constructor () {
         super();
-        this.columns =  [ 
+        this.userName = 'Sin nombre';
+        this.columns =  [
             { "data":"Documento"}, 
             { "data": "Tipo de documento" },
             { "data": "Asociado a" },
@@ -64,12 +65,14 @@ export class Mydocs extends View {
             }
             
             ]
+
+            this.changeName();
     }
     
     render () {
         return `
         <div class="content">
-            <div><p><h2> MIS DOCUMENTOS </h2></p></div>
+            <div><p><h2> MIS DOCUMENTOS ${this.userName} </h2></p></div>
             <div><p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
                     Nostrum autem nam necessitatibus dicta, dolor iure tempora, 
                     quaerat rem sint optio ipsum voluptatibus, perspiciatis temporibus
@@ -103,5 +106,12 @@ export class Mydocs extends View {
         </table>
         </div>
         `
+    }
+
+    changeName () {
+        setTimeout(() => {
+            this.userName = 'Miguel';
+            this.refreshView();
+        }, 10000)
     }
 }

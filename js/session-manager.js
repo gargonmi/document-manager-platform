@@ -1,4 +1,5 @@
 
+export let session;
 import { View } from './view.js';
 
 export class UserLogin extends View {
@@ -23,7 +24,25 @@ export class UserLogin extends View {
                     <button id="submitLogin">login</button>
                 </div>
             </div>    
+            <p><div class="errors"></div></p>
         
         `
     }
+}
+
+session = {
+
+    loginFire(email,pass){
+        firebase.auth().signInWithEmailAndPassword(email, pass).catch(function(error) {
+            // Handle Errors here.
+            let errorCode = error.code;
+            let errorMessage = error.message; 
+            let divErrors = document.querySelector('.errors');
+            divErrors.innerHTML = (errorCode + ": " + errorMessage);
+         });
+    },
+    logout(){
+        firebase.auth().signOut();
+    },
+
 }

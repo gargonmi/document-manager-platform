@@ -10,8 +10,9 @@ import { Profiles } from './profile.js';
 import { Tabla } from './tables.js';
 import { database} from './storeManager.js';
 import { inicializefirebase } from './storeManager.js';
-import { loginFire } from './storeManager.js';
-import { UserLogin } from './login.js';
+import { session } from './session-manager.js';
+import { UserLogin } from './session-manager.js';
+import { UserProfile } from './user-profile.js';
 
 
 let wrapper = document.querySelector('.wrapper');
@@ -24,6 +25,15 @@ let myworkers = new Myworkers();
 let mysites = new Mysites();
 let profiles = new Profiles();
 
+
+let viewManager = new ViewManager({
+    nav: '.app-nav',
+    content: '.app-content',
+    footer: '.app-footer',
+    head: '.app-header',
+    login:'.app-login'
+    })
+
 inicializefirebase();
 
 
@@ -32,30 +42,16 @@ inicializefirebase();
 //INIT 
 function init(){
     
-    firebase.auth().signOut();
-    let loginDiv = document.createElement('div');
-    loginDiv.setAttribute('class','app-login');
-    wrapper.appendChild(loginDiv);
+    //session.logout();
     let userLogin = new UserLogin();
-    let viewManager = new ViewManager({
-        nav: '.app-nav',
-        content: '.app-content',
-        footer: '.app-footer',
-        head: '.app-header',
-        login:'.app-login'
-        })
     viewManager.showView(userLogin, 'login');
     viewManager.sections.login.addEventListener('click',loginHandler);
     console.log('en init');
-    
+    login();
+   
 }
 
-
-
-
-
-
-
+// LOGIN EVENT
 function loginHandler(event){
     
     if (event.target.id === "submitLogin"){
@@ -65,45 +61,54 @@ function loginHandler(event){
     }
 }
 
+//LOGIN
 
 function login(email,pass){
     
-    
-    loginFire(email,pass);
+    //session.loginFire(email,pass);
     firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      // User is signed in.
-      var displayName = user.displayName;
-      var email = user.email;
-      var emailVerified = user.emailVerified;
-      var photoURL = user.photoURL;
-      var isAnonymous = user.isAnonymous;
-      var uid = user.uid;
-      var providerData = user.providerData;
-     console.log('el usuario existe');
-     if (document.body.contains(document.querySelector('.app-login'))){
-        wrapper.removeChild(document.querySelector('.app-login'));}
-        enter();
-    }   
+        if (user) {
+            // User is signed in.
+            var displayName = user.displayName;
+            var email = user.email;
+            var emailVerified = user.emailVerified;
+            var photoURL = user.photoURL;
+            var isAnonymous = user.isAnonymous;
+            var uid = user.uid;
+            var providerData = user.providerData;
+            console.log('el usuario existe');
+            if (document.body.contains(document.querySelector('.app-login'))){
+                wrapper.removeChild(document.querySelector('.app-login'));}
+            enter(user);
+            
+        }
     });
-    
-  
+        
+
 }
 
-function enter(){
-    let viewManager = new ViewManager({
-        nav: '.app-nav',
-        content: '.app-content',
-        footer: '.app-footer',
-        head: '.app-header',
-        
-        })
-    
-    
+// TO ENTER 
+
+function enter(user){    
+
+    //SHOW VIEWS
     viewManager.showView(nav, 'nav');
     viewManager.showView(head,'head');
     viewManager.showView(footer1,'footer');
     viewManager.showView(home1,'content');
+
+    //SHOW USER INFO
+    let userMailNode = document.querySelector('#userMail');
+    userMailNode.innerHTML = user.email;
+
+    //user.displayName = 'Miguel';
+    //user.updateProfile(
+       // {
+           // displayName:"Miguel Angel Garcia"
+        //}
+    //).then(()=>console.log('update OK'));
+    console.log(firebase.auth().currentUser);
+
 
     // EVENTS
 
@@ -112,7 +117,15 @@ function navHandler(event){
 
     if (event.target.dataset.link ===  'logout'){
         location.reload(true);}
-    else{
+
+    else if (event.target.dataset.link ===  'userConfig'){
+        console.log("userconfig");
+        let userConfig = new UserProfile(user)
+        viewManager.showView(userConfig, 'content');
+    }
+    else {
+        console.log(event.target.dataset.link);
+        console.log('por else');
         let viewToShow;
         let data;
     
@@ -124,6 +137,7 @@ function navHandler(event){
 
             case 'profile':
                 viewToShow = profiles;
+                head.miVar = 'hola'
                 break;
             case 'myDocs':
                 viewToShow = mydocs;
@@ -145,8 +159,10 @@ function navHandler(event){
     }
 
 }
-
+console.log(firebase.auth().currentUser);
 }
+
+
 
 
 window.onload = init();

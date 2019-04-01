@@ -41,6 +41,23 @@ export class ViewManager {
             throw new Error ('La seccion no existe');
         }
 
+        const inst = sectionName
+
         view.mount(this.sections[sectionName]);
     }
+    
+
+    _proxyView (view, section) {
+        new Proxy(view, {
+            set: (target, name, value) => {
+                try {
+                    return true;
+                } finally {
+                     view.mount(section);
+                }
+            }
+        });
+    }
+
+    
 }

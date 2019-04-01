@@ -12,6 +12,7 @@
 }
 .app-login{
     display:flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     grid-column:1/7;
@@ -74,10 +75,28 @@
     color:white;
     border-radius: 50px;
     padding: 30px;
+    width:20%;
     
     background: #6D7993;
     display:flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.user{
+    padding:20px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content: center;
+    flex-direction: column;
+    align-items: start;
+}
+.userConfig{
+    margin-left:10%; 
+    margin-top: 10%;
+    width:30%;
+    display:flex;
+    flex-direction: column;
+
 }

@@ -1,5 +1,6 @@
 import { View } from './view.js';
 
+
 export class Nav extends View {
 
     constructor () {
@@ -10,17 +11,20 @@ export class Nav extends View {
         return `
         <div class="nav">
             
-            <div data-link="dashboard">dashboard</div>
-            <div data-link="profile">perfil</div>
-            <div data-link="myDocs">mis documentos</div>
-            <div data-link="myWorkers">mis trabajadores</div>
-            <div data-link="mySites">mis centros</div>
+            <p><div data-link="dashboard">dashboard</div></p>
+            <p><div data-link="profile">perfil</div></p>
+            <p><div data-link="myDocs">mis documentos</div></p>
+            <p><div data-link="myWorkers">trabajadores</div></p>
+            <p><div data-link="mySites">mis centros</div></p>
 
               
         </div>
 
         <div class="user">
-            <div data-link="logout">logout</div>
+            <img src='https://api.adorable.io/avatars/100/abott@adorable.png'></img>
+            <div id="userMail"></div>
+            <p><div data-link="userConfig">configurar</div></p>
+             <div data-link="logout">logout</div>
         </div>
         `
     }

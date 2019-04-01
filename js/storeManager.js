@@ -1,7 +1,7 @@
 
 export let database;
-export let loginFire;
 export let inicializefirebase;
+//import {user} from session-manager.js;
 
 const ref = new Firebase("https://myfirebase-magg.firebaseio.com/peliculas");
 /*
@@ -134,19 +134,6 @@ workersBase.set([
       });
     }
   }
-
-loginFire = function(email,pass){
-
-    firebase.auth().signInWithEmailAndPassword(email, pass).catch(function(error) {
-    // Handle Errors here.
-      let errorCode = error.code;
-      let errorMessage = error.message; 
-      console.log(errorCode + errorMessage);
-      });
-    
-   
-
-}
 inicializefirebase = function(){
  // Initialize Firebase
   // TODO: Replace with your project's customized code snippet
