@@ -1,120 +1,20 @@
 
 export let database;
 export let inicializefirebase;
+export let storage;
+
 //import {user} from session-manager.js;
+//apellido.push({apellidodeMiguel:"garcia"});
+//usersRef.set({otrousuario:"pepe"});
 
-const ref = new Firebase("https://myfirebase-magg.firebaseio.com/peliculas");
-/*
-const docsBase = ref.child("documentos");
-const workersBase = ref.child("workers");
 
-docsBase.set([
-  {
-      "Documento":"Certificado hacienda",
-      "Tipo de documento":"Impuestos",
-      "Asociado a":"Tubecleaners",
-      "Fecha del documento":"25 septiembre",
-      "Tiempo para que expire":"25 dias"
-  },
-  {
-      "Documento":"Certificado Seguridad social",
-      "Tipo de documento":"Impuestos",
-      "Asociado a":"Tubecleaners",
-      "Fecha del documento":"25 septiembre",
-      "Tiempo para que expire":"13 dias"
-  },
-  {
-      "Documento":"EPIS",
-      "Tipo de documento":"prl",
-      "Asociado a":"Pedro Jimenez currela",
-      "Fecha del documento":"12 septiembre",
-      "Tiempo para que expire":"1 dias"
-  },
-  {
-      "Documento":"Curso de alturas",
-      "Tipo de documento":"curso",
-      "Asociado a":" Pepito currante",
-      "Fecha del documento":"25 septiembre",
-      "Tiempo para que expire":"25 dias"
-  },
-  {
-      "Documento":"plan de prevencion",
-      "Tipo de documento":"prl",
-      "Asociado a":"Tubecleaners",
-      "Fecha del documento":"25 septiembre",
-      "Tiempo para que expire":"25 dias"
-  },
-  {
-      "Documento":"Seguro accidentes",
-      "Tipo de documento":"Seguros",
-      "Asociado a":"Tubecleaners",
-      "Fecha del documento":"25 septiembre",
-      "Tiempo para que expire":"25 dias"
-  },
-  {
-      "Documento":"Seguro rc",
-      "Tipo de documento":"Seguros",
-      "Asociado a":"Tubecleaners",
-      "Fecha del documento":"25 septiembre",
-      "Tiempo para que expire":"25 dias"
-  }
-  ]
-);
-workersBase.set([
-  {
-      "Empleado":"Federico Jimenez",
-      "DNI":"2550039P",
-      "Puesto":"Supervisor",
-      "Estado":"Verde",
-      "Documentos":"Link"
-  },
-  {
-      "Empleado":"Paco Porras",
-      "DNI":"43240044P",
-      "Puesto":"Tecnico",
-      "Estado":"Rojo",
-      "Documentos":"Link"
-  },
-  {
-      "Empleado":"federico sanchez",
-      "DNI":"43240044P",
-      "Puesto":"Tecnico",
-      "Estado":"Rojo",
-      "Documentos":"Link"
-  },
-  {
-      "Empleado":"Fulanito gonzalez",
-      "DNI":"43240044P",
-      "Puesto":"Tecnico",
-      "Estado":"Rojo",
-      "Documentos":"Link"
-  },
-  {
-      "Empleado":"fermin Garcia",
-      "DNI":"4325674P",
-      "Puesto":"Administrativo",
-      "Estado":"Rojo",
-      "Documentos":"Link"
-  },
-  {
-      "Empleado":"Paco Porras",
-      "DNI":"423876P",
-      "Puesto":"Jefe equipo",
-      "Estado":"Rojo",
-      "Documentos":"Link"
-  },
-  {
-      "Empleado":"Paco Porras",
-      "DNI":"4376765",
-      "Puesto":"Limpiador",
-      "Estado":"Rojo",
-      "Documentos":"Link"
-  }
-  ]);
- */
+  database =  {
 
-  database = {
+
     readData(base) { 
+
+   
+/*
       return new Promise(function(resolve){
         ref.once("value", snapshot => {
           let data;
@@ -132,6 +32,18 @@ workersBase.set([
           }
         })  
       });
+      */
+    },
+    writeData(metadata,filePath){
+        let ref = new Firebase("https://myfirebase-magg.firebaseio.com/");
+        let usersRef = ref.child('documentManager');
+        let newUser = usersRef.child('users');
+        let userUid = newUser.child("lumiyiwUodWRJ9vNyVHvducKSJu2");
+        metadata.filePath = filePath;
+        let newDocument = userUid.push(metadata);
+
+
+
     }
   }
 inicializefirebase = function(){
@@ -146,4 +58,28 @@ inicializefirebase = function(){
     messagingSenderId: "432197009292"
   };
   firebase.initializeApp(config);
+  
+}
+
+
+storage = function(file,metadata){
+
+    storage = firebase.storage();
+    let storageRef = storage.ref();
+
+
+    // Create a reference to new file charged
+    let newFileCharged = storageRef.child(file.name);
+
+    // Create a path reference to 'images/mountains.jpg'
+    let newFileChargedPath = storageRef.child('documents/' + file.name);
+
+    // While the file names are the same, the references point to different files
+    //mountainsRef.name === mountainImagesRef.name            // true
+    //mountainsRef.fullPath === mountainImagesRef.fullPath    // false
+
+    newFileChargedPath.put(file);
+    database.writeData(metadata,newFileChargedPath.location.path_);
+    
+
 }

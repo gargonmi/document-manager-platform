@@ -21,6 +21,9 @@ export class Home extends View {
                      ut blanditiis.
                  </p>
             </div>
+            <div>
+                <input type="file" id="file" name="file"/> 
+            </div>
         </div>
         `
     }

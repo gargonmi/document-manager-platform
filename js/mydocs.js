@@ -1,5 +1,8 @@
 
 import { View } from './view.js';
+import {storage} from './storeManager.js';
+import { Tabla } from './tables.js';
+import { database } from './storeManager.js';
 
 export class Mydocs extends View {
 
@@ -12,6 +15,9 @@ export class Mydocs extends View {
             { "data": "Asociado a" },
             { "data": "Fecha del documento" },
             { "data": "Tiempo para que expire" }, 
+            { "data": "Nombre del archivo" }, 
+            { "data": "Formato" },
+            { "data": "Extension" },  
         ]
         this.datos = [
             {
@@ -72,13 +78,7 @@ export class Mydocs extends View {
         return `
         <div class="content">
             <div><p><h2> MIS DOCUMENTOS ${this.userName} </h2></p></div>
-            <div><p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
-                    Nostrum autem nam necessitatibus dicta, dolor iure tempora, 
-                    quaerat rem sint optio ipsum voluptatibus, perspiciatis temporibus
-                     quae commodi! Voluptatibus rerum cupiditate inventore, saepe 
-                     nam adipisci consequatur. Amet nulla unde totam. Quibusdam nihil 
-                     dignissimos dolorem sunt vel, molestiae molestias nostrum. Maiores,
-                     ut blanditiis.
+            <div><p>Documentos 
                  </p>
             </div>
             <table id="tabla" class="tableGeneric" style="width:100%">
@@ -89,6 +89,9 @@ export class Mydocs extends View {
                   <th>Asociado a</th>
                   <th>Fecha del documento</th>
                   <th>Tiempo para que expire</th>
+                  <th>Nombre del archivo</th>
+                  <th>Formato</th>
+                  <th>Extension</th>
                 </tr>
               </thead>
               <tfoot>
@@ -99,21 +102,45 @@ export class Mydocs extends View {
                 <th>Asociado a</th>
                 <th>Fecha del documento</th>
                 <th>Tiempo para que expire</th>
+                <th>Nombre del archivo</th>
+                <th>Formato</th>
+                <th>Extension</th>
 
                 </tr>
               </tfoot>
         </table>
-        <button id="mydocs-button">Cambiar nombre</button>
+            <div class="uploadFileArea">
+                <input type="text" class="newDocumentName" placeholder="Nombre del documento"/>
+                <input type="text" class="newDocumentType" placeholder="Tipo de documento"/>
+                <input type="text" class="newDocumentLink" placeholder="Asociado a"/>
+                <input type="text" class="newDocumentDate" placeholder="Fecha del documento"/>
+                <input type="text" class="newDocumentExpire" placeholder="Fecha de caducidad"/>
+                <input type="file" id="file" name="file"/> 
+            </div>
         </div>
         `
     }
 
     addEventListeners () {
-        this.query('#mydocs-button').addEventListener('click', () => this.changeName());
+        this.query('#file').addEventListener('change', () => this.fileEventHandler(event));
     }
 
-    changeName () {
-        this.userName = 'Miguel';
+
+    fileEventHandler(event){
+        let file = event.target.files[0];
+        let metadata = {
+            'documentName': document.querySelector('.newDocumentName').value,
+            'documentType': document.querySelector('.newDocumentType').value,
+            'documentLink': document.querySelector('.newDocumentLink').value,
+            'documentDate': document.querySelector('.newDocumentDate').value,
+            'documentdate': document.querySelector('.newDocumentExpire').value
+        }
+        storage(file,metadata);
         this.refreshView();
+    }
+
+    drawTable(){
+        let tableObj = new Tabla(this.columns);
+        database.readData(data).then((info)=>{tableObj.formatTable(info)});
     }
 }

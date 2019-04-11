@@ -8,7 +8,7 @@ import { Myworkers } from './myworkers.js';
 import { Mysites } from './mysites.js';
 import { Profiles } from './profile.js';
 import { Tabla } from './tables.js';
-import { database} from './storeManager.js';
+import { database, storage} from './storeManager.js';
 import { inicializefirebase } from './storeManager.js';
 import { session } from './session-manager.js';
 import { UserLogin } from './session-manager.js';
@@ -76,7 +76,7 @@ function login(email,pass){
             var isAnonymous = user.isAnonymous;
             var uid = user.uid;
             var providerData = user.providerData;
-            console.log('el usuario existe');
+            console.log(uid);
             if (document.body.contains(document.querySelector('.app-login'))){
                 wrapper.removeChild(document.querySelector('.app-login'));}
             enter(user);
@@ -90,6 +90,8 @@ function login(email,pass){
 // TO ENTER 
 
 function enter(user){    
+
+    console.log('en enter');
 
     //SHOW VIEWS
     viewManager.showView(nav, 'nav');
@@ -107,29 +109,29 @@ function enter(user){
            // displayName:"Miguel Angel Garcia"
         //}
     //).then(()=>console.log('update OK'));
-    console.log(firebase.auth().currentUser);
+    // let rootRef = storage.ref();
 
 
     // EVENTS
 
-viewManager.sections.nav.addEventListener('click',navHandler);
-function navHandler(event){
+    viewManager.sections.nav.addEventListener('click',navHandler);
+    function navHandler(event){
 
-    if (event.target.dataset.link ===  'logout'){
-        location.reload(true);}
+        if (event.target.dataset.link ===  'logout'){
+            location.reload(true);}
 
-    else if (event.target.dataset.link ===  'userConfig'){
-        console.log("userconfig");
-        let userConfig = new UserProfile(user)
-        viewManager.showView(userConfig, 'content');
-    }
-    else {
-        console.log(event.target.dataset.link);
-        console.log('por else');
-        let viewToShow;
-        let data;
+        else if (event.target.dataset.link ===  'userConfig'){
+            console.log("userconfig");
+            let userConfig = new UserProfile(user)
+            viewManager.showView(userConfig, 'content');
+        }
+        else {
+            console.log(event.target.dataset.link);
+            console.log('por else');
+            let viewToShow;
+            let data;
     
-        switch (event.target.dataset.link) {
+            switch (event.target.dataset.link) {
 
             case 'dashboard':
                 viewToShow = home1;
@@ -152,20 +154,31 @@ function navHandler(event){
                 viewToShow = mysites;
                 break;
         
-        }
+            }
         viewManager.showView(viewToShow,'content');
-        let tableObj = new Tabla(viewToShow.columns);
-        database.readData(data).then((info)=>{tableObj.formatTable(info)});
+        //let tableObj = new Tabla(viewToShow.columns);
+        //database.readData(data).then((info)=>{tableObj.formatTable(info)});
+        }
     }
-
+    // files handler event 
+    function fileEventHandler(event){
+        let file = event.target.files[0]; 
+        console.log(file.name);
+        console.log(file.size);
+        console.log(file.type);
+        console.log(file);
+        console.log(event);
+        storage(file);
+    }
+    document.querySelector('#file').addEventListener('change',fileEventHandler);
 }
-console.log(firebase.auth().currentUser);
-}
-
-
 
 
 window.onload = init();
+
+
+ 
+
 
 
 
