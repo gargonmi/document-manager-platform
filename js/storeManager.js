@@ -1,52 +1,43 @@
 
-export let database;
-export let inicializefirebase;
-export let storage;
+export const database = {
 
-//import {user} from session-manager.js;
-//apellido.push({apellidodeMiguel:"garcia"});
-//usersRef.set({otrousuario:"pepe"});
-
-
-  database =  {
-
-
-    readData(base) { 
-
-   
-/*
-      return new Promise(function(resolve){
-        ref.once("value", snapshot => {
-          let data;
-          switch (base){
-
-            case "documentos":
-            data = snapshot.val().documentos;
-            resolve(data);
-            break;
-
-            case "workers":
-            data = snapshot.val().workers;
-            resolve(data);
-            break;
-          }
-        })  
-      });
-      */
-    },
-    writeData(metadata,filePath){
+    readDataSnapshot() { 
         let ref = new Firebase("https://myfirebase-magg.firebaseio.com/");
         let usersRef = ref.child('documentManager');
         let newUser = usersRef.child('users');
         let userUid = newUser.child("lumiyiwUodWRJ9vNyVHvducKSJu2");
-        metadata.filePath = filePath;
+      return new Promise(function(resolve){
+        userUid.once("value", snapshot => {
+            resolve(snapshot.val());  
+        })  
+      });
+    },
+    writeData(metadata,file){
+        let ref = new Firebase("https://myfirebase-magg.firebaseio.com/");
+        let usersRef = ref.child('documentManager');
+        let newUser = usersRef.child('users');
+        let userUid = newUser.child("lumiyiwUodWRJ9vNyVHvducKSJu2");
+        metadata.filePath = file.location.path_;
+        metadata.Archivo = file.name ;
         let newDocument = userUid.push(metadata);
+        window.toastr.success('Document data saved ');
+    },
 
-
-
+    listenerData(){
+        let ref = new Firebase("https://myfirebase-magg.firebaseio.com/");
+        let usersRef = ref.child('documentManager');
+        let newUser = usersRef.child('users');
+        let userUid = newUser.child("lumiyiwUodWRJ9vNyVHvducKSJu2");
+        return new Promise (function (resolve) { 
+            userUid.once("value", snapshot => {
+            console.log("datos actualizados"); 
+            });
+        })
     }
-  }
-inicializefirebase = function(){
+  
+}
+
+export function inicializefirebase () {
  // Initialize Firebase
   // TODO: Replace with your project's customized code snippet
   var config = {
@@ -57,29 +48,37 @@ inicializefirebase = function(){
     storageBucket: "myfirebase-magg.appspot.com",
     messagingSenderId: "432197009292"
   };
-  firebase.initializeApp(config);
   
+  window.firebase.initializeApp(config);
 }
 
 
-storage = function(file,metadata){
-
-    storage = firebase.storage();
-    let storageRef = storage.ref();
-
-
-    // Create a reference to new file charged
-    let newFileCharged = storageRef.child(file.name);
-
-    // Create a path reference to 'images/mountains.jpg'
-    let newFileChargedPath = storageRef.child('documents/' + file.name);
-
-    // While the file names are the same, the references point to different files
-    //mountainsRef.name === mountainImagesRef.name            // true
-    //mountainsRef.fullPath === mountainImagesRef.fullPath    // false
-
-    newFileChargedPath.put(file);
-    database.writeData(metadata,newFileChargedPath.location.path_);
+export const storage = { 
     
+    loadFile(file,metadata){
 
+        const firebaseStorage = firebase.storage();
+        let storageRef = firebaseStorage.ref();
+
+        // Create a reference to new file charged
+        let newFileCharged = storageRef.child(file.name);
+
+        // Create a path reference to 'images/mountains.jpg'
+        let newFileChargedPath = storageRef.child('documents/' + file.name);
+
+        newFileChargedPath.put(file);
+        toastr.success('File Stored');
+        //let filePath = newFileChargedPath.location.path_;
+        database.writeData(metadata,newFileChargedPath);
+    },
+
+    downloadFile(e,cell){
+        
+        const firebaseStorage = firebase.storage();
+        let pathReference = firebaseStorage.ref(cell.getValue());
+
+        pathReference.getDownloadURL().then(function(url){
+            window.open(url);
+        })
+    }
 }

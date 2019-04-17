@@ -1,8 +1,9 @@
+
 import { Header } from './header.js';
 import { Home } from './home.js';
 import { Footer } from './footer.js';
 import { Nav } from './nav.js';
-import { ViewManager } from './view-manager.js';
+import { ViewManager } from './view-manager.js'
 import { Mydocs } from './mydocs.js';
 import { Myworkers } from './myworkers.js';
 import { Mysites } from './mysites.js';
@@ -25,7 +26,6 @@ let myworkers = new Myworkers();
 let mysites = new Mysites();
 let profiles = new Profiles();
 
-
 let viewManager = new ViewManager({
     nav: '.app-nav',
     content: '.app-content',
@@ -36,9 +36,6 @@ let viewManager = new ViewManager({
 
 inicializefirebase();
 
-
-    
-
 //INIT 
 function init(){
     
@@ -46,7 +43,7 @@ function init(){
     let userLogin = new UserLogin();
     viewManager.showView(userLogin, 'login');
     viewManager.sections.login.addEventListener('click',loginHandler);
-    console.log('en init');
+   
     login();
    
 }
@@ -76,7 +73,7 @@ function login(email,pass){
             var isAnonymous = user.isAnonymous;
             var uid = user.uid;
             var providerData = user.providerData;
-            console.log(uid);
+            
             if (document.body.contains(document.querySelector('.app-login'))){
                 wrapper.removeChild(document.querySelector('.app-login'));}
             enter(user);
@@ -91,7 +88,7 @@ function login(email,pass){
 
 function enter(user){    
 
-    console.log('en enter');
+    
 
     //SHOW VIEWS
     viewManager.showView(nav, 'nav');
@@ -121,13 +118,12 @@ function enter(user){
             location.reload(true);}
 
         else if (event.target.dataset.link ===  'userConfig'){
-            console.log("userconfig");
+           
             let userConfig = new UserProfile(user)
             viewManager.showView(userConfig, 'content');
         }
         else {
-            console.log(event.target.dataset.link);
-            console.log('por else');
+         
             let viewToShow;
             let data;
     
@@ -155,19 +151,17 @@ function enter(user){
                 break;
         
             }
-        viewManager.showView(viewToShow,'content');
-        //let tableObj = new Tabla(viewToShow.columns);
-        //database.readData(data).then((info)=>{tableObj.formatTable(info)});
+            viewManager.showView(viewToShow,'content');
+            mydocs.drawTable();
+            
+           
+
         }
     }
     // files handler event 
     function fileEventHandler(event){
         let file = event.target.files[0]; 
-        console.log(file.name);
-        console.log(file.size);
-        console.log(file.type);
-        console.log(file);
-        console.log(event);
+       
         storage(file);
     }
     document.querySelector('#file').addEventListener('change',fileEventHandler);

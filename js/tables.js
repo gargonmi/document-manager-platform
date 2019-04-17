@@ -2,17 +2,20 @@
 export class Tabla {
 
     constructor(columns){
-        this.columns = columns;
-       
+        this.columns = columns;    
     }
-    formatTable(datos){
-    var tableDocs = $('#tabla'); 
-    const tabla = tableDocs.dataTable({
-       "dom": 'rtipl',
-       "data": datos,
-       "columns": this.columns });
-    }
+
     
+    formatTabulator(data,columns){
+        var table = new Tabulator(".tabulatorTable", {
+            index:"Documento",
+            height:false, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+            data:data, //assign data to table
+            layout:"fitColumns", //fit columns to width of table (optional)
+            columns:this.columns
+            
+        });
+    };
 }
 
 
