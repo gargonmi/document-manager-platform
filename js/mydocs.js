@@ -9,7 +9,6 @@ export class Mydocs extends View {
     constructor () {
         super();
         this.loading = false;
-        this.userName = 'Sin nombre';
         this.columns = [ //Define Table Columns
             {title:"Documento", field:"Documento", width:150},
             {title:"Tipo de documento", field:"Tipo de documento", align:"left"},
@@ -47,7 +46,7 @@ export class Mydocs extends View {
     render () {
         return `
         <div class="content">
-            <div><p><h2> MIS DOCUMENTOS ${this.userName} </h2></p></div>
+            <div><p><h2> MIS DOCUMENTOS</h2></p></div>
             <div><p>Documentos 
                  </p>
             </div>
@@ -62,9 +61,12 @@ export class Mydocs extends View {
                 <input type="file" id="file" name="file"/> 
             </div>
             
-        </div>
-        
+        </div>  
         `
+    }
+
+    afterMount () {
+        this.drawTable();
     }
 
     addEventListeners () {
@@ -82,8 +84,6 @@ export class Mydocs extends View {
         }
         storage.loadFile(file,metadata);
         this.drawTable();
-        
-        
     }
 
     drawTable(){

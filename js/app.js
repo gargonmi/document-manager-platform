@@ -84,80 +84,66 @@ function login(email,pass){
 
 }
 
+function actualHash () {
+    return window.location.hash.substr(1);
+}
+
 // TO ENTER 
 
-function enter(user){    
+function route (path, firstNavigation) {
+    let viewToShow
 
+    switch (path) {
+
+        case 'dashboard':
+            viewToShow = home1;
+            break;
+        case 'perfil':
+            viewToShow = profiles;
+            break;
+        case 'documentos':
+            viewToShow = mydocs;
+            break;
+        case 'trabajadores':
+            viewToShow = myworkers;
+            break;
+        case 'plataformas':
+            viewToShow = mysites;
+            break;
+        case 'configuracion':
+            let userConfig = new UserProfile(user)
+            viewManager.showView(userConfig, 'content');
+            break;
+        case 'logout': 
+            location.reload(true);
+            break;
+        }
+
+        if (viewToShow) {
+            viewManager.showView(viewToShow, 'content');
+        } else if (firstNavigation) {
+            viewManager.showView(home1, 'content');
+        }
+}
+
+
+function enter(user){
     
+    window.addEventListener('hashchange', function() {
+        route(actualHash(), false)
+    }, false);
+
+    route(actualHash(), true);
 
     //SHOW VIEWS
     viewManager.showView(nav, 'nav');
     viewManager.showView(head,'head');
     viewManager.showView(footer1,'footer');
-    viewManager.showView(home1,'content');
 
     //SHOW USER INFO
     let userMailNode = document.querySelector('#userMail');
     userMailNode.innerHTML = user.email;
 
-    //user.displayName = 'Miguel';
-    //user.updateProfile(
-       // {
-           // displayName:"Miguel Angel Garcia"
-        //}
-    //).then(()=>console.log('update OK'));
-    // let rootRef = storage.ref();
-
-
-    // EVENTS
-
-    viewManager.sections.nav.addEventListener('click',navHandler);
-    function navHandler(event){
-
-        if (event.target.dataset.link ===  'logout'){
-            location.reload(true);}
-
-        else if (event.target.dataset.link ===  'userConfig'){
-           
-            let userConfig = new UserProfile(user)
-            viewManager.showView(userConfig, 'content');
-        }
-        else {
-         
-            let viewToShow;
-            let data;
-    
-            switch (event.target.dataset.link) {
-
-            case 'dashboard':
-                viewToShow = home1;
-                break;
-
-            case 'profile':
-                viewToShow = profiles;
-                head.miVar = 'hola'
-                break;
-            case 'myDocs':
-                viewToShow = mydocs;
-                data = "documentos";
-                break;
-            case 'myWorkers':
-                viewToShow = myworkers;
-                data = "workers";
-                break;
-
-            case 'mySites':
-                viewToShow = mysites;
-                break;
-        
-            }
-            viewManager.showView(viewToShow,'content');
-            mydocs.drawTable();
-            
-           
-
-        }
-    }
     // files handler event 
     function fileEventHandler(event){
         let file = event.target.files[0]; 

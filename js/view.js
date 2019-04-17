@@ -17,7 +17,11 @@ export class View {
        domNode.innerHTML = html;
 
        if (typeof this.addEventListeners === 'function') {
-           this.addEventListeners();
+            this.addEventListeners();
+       }
+
+       if (typeof this.afterMount === 'function') {
+            this.afterMount();
        }
     }
 
@@ -30,5 +34,9 @@ export class View {
             this.addEventListeners();
         }
     }
+
+
+
+
 
 }
