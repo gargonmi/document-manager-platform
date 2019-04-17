@@ -34,9 +34,4 @@ export class View {
             this.addEventListeners();
         }
     }
-
-
-
-
-
 }

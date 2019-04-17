@@ -89,12 +89,14 @@ export class Mydocs extends View {
     drawTable(){
         this.loading = true;
         this.refreshView();
+        // window.app.viewManager.showView(new CreateDocModal(), 'app-modal')
         database.readDataSnapshot().then(data => {
             this.loading = false;
             this.refreshView();
             let tableObj = new Tabla(this.columns);
             tableObj.formatTabulator(this.dataFormat(data));
         });
+        this.remove
     }
 
     

@@ -46,18 +46,4 @@ export class ViewManager {
         view.mount(this.sections[sectionName]);
     }
     
-
-    _proxyView (view, section) {
-        new Proxy(view, {
-            set: (target, name, value) => {
-                try {
-                    return true;
-                } finally {
-                     view.mount(section);
-                }
-            }
-        });
-    }
-
-    
 }

@@ -17,14 +17,6 @@ import { UserProfile } from './user-profile.js';
 
 
 let wrapper = document.querySelector('.wrapper');
-let home1 = new Home();
-let nav = new Nav();
-let footer1 = new Footer();
-let head = new Header();
-let mydocs = new Mydocs();
-let myworkers = new Myworkers();
-let mysites = new Mysites();
-let profiles = new Profiles();
 
 let viewManager = new ViewManager({
     nav: '.app-nav',
@@ -32,7 +24,11 @@ let viewManager = new ViewManager({
     footer: '.app-footer',
     head: '.app-header',
     login:'.app-login'
-    })
+})
+
+window.app = {
+    viewManager
+}
 
 inicializefirebase();
 
@@ -96,21 +92,26 @@ function route (path, firstNavigation) {
     switch (path) {
 
         case 'dashboard':
+            let home1 = new Home();
             viewToShow = home1;
             break;
         case 'perfil':
             viewToShow = profiles;
             break;
         case 'documentos':
+            let mydocs = new Mydocs();
             viewToShow = mydocs;
             break;
         case 'trabajadores':
+            let myworkers = new Myworkers();
             viewToShow = myworkers;
             break;
         case 'plataformas':
+            let mysites = new Mysites();
             viewToShow = mysites;
             break;
         case 'configuracion':
+            // let profiles = new Profiles();
             let userConfig = new UserProfile(user)
             viewManager.showView(userConfig, 'content');
             break;
@@ -135,7 +136,11 @@ function enter(user){
 
     route(actualHash(), true);
 
-    //SHOW VIEWS
+    //SHOW DEFAULT VIEWS
+    let nav = new Nav();
+    let footer1 = new Footer();
+    let head = new Header();
+
     viewManager.showView(nav, 'nav');
     viewManager.showView(head,'head');
     viewManager.showView(footer1,'footer');
