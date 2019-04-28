@@ -13,7 +13,7 @@ export class Header extends View {
     render () {
         return `
         <div class="header">
-        <h1>security manager</h1>
+        <h1>CAE-manager</h1>
         </div>
         `
     }

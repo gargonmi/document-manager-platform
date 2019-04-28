@@ -3,8 +3,9 @@ import { View } from './view.js';
 
 export class Nav extends View {
 
-    constructor () {
+    constructor (user) {
         super();
+        this.user = user;
     }
     
     render () {
@@ -21,8 +22,9 @@ export class Nav extends View {
         </div>
 
         <div class="user">
-            <img src='https://api.adorable.io/avatars/100/abott@adorable.png'></img>
-            <div id="userMail"></div>
+            <img src='${this.user.photoURL ? this.user.photoURL : 'https://api.adorable.io/avatars/200/abott@adorable.png' }' height="100" width="100"></img>
+            ${this.user.displayName}
+            ${this.user.email}
             <p><a href="#configuracion">configurar</a></p>
              <a href="#logout">logout</a>
         </div>

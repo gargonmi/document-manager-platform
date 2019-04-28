@@ -14,6 +14,8 @@ import { inicializefirebase } from './storeManager.js';
 import { session } from './session-manager.js';
 import { UserLogin } from './session-manager.js';
 import { UserProfile } from './user-profile.js';
+import { Modal } from './modal.js';
+
 
 
 let wrapper = document.querySelector('.wrapper');
@@ -23,12 +25,14 @@ let viewManager = new ViewManager({
     content: '.app-content',
     footer: '.app-footer',
     head: '.app-header',
-    login:'.app-login'
+    login:'.app-login',
+    modal:'.app-modal'
 })
 
 window.app = {
     viewManager
 }
+
 
 inicializefirebase();
 
@@ -38,9 +42,8 @@ function init(){
     //session.logout();
     let userLogin = new UserLogin();
     viewManager.showView(userLogin, 'login');
-    viewManager.sections.login.addEventListener('click',loginHandler);
-   
-    login();
+    document.querySelector('#submitLogin').addEventListener('click',loginHandler);
+    login()
    
 }
 
@@ -69,15 +72,17 @@ function login(email,pass){
             var isAnonymous = user.isAnonymous;
             var uid = user.uid;
             var providerData = user.providerData;
-            
+
             if (document.body.contains(document.querySelector('.app-login'))){
                 wrapper.removeChild(document.querySelector('.app-login'));}
+               
             enter(user);
-            
         }
+
+        
     });
         
-
+    
 }
 
 function actualHash () {
@@ -86,7 +91,7 @@ function actualHash () {
 
 // TO ENTER 
 
-function route (path, firstNavigation) {
+function route (path, firstNavigation,user) {
     let viewToShow
 
     switch (path) {
@@ -111,9 +116,9 @@ function route (path, firstNavigation) {
             viewToShow = mysites;
             break;
         case 'configuracion':
-            // let profiles = new Profiles();
-            let userConfig = new UserProfile(user)
-            viewManager.showView(userConfig, 'content');
+            
+            let userProfile = new UserProfile(user)
+            viewToShow = userProfile;
             break;
         case 'logout': 
             location.reload(true);
@@ -123,6 +128,7 @@ function route (path, firstNavigation) {
         if (viewToShow) {
             viewManager.showView(viewToShow, 'content');
         } else if (firstNavigation) {
+            let home1 = new Home;
             viewManager.showView(home1, 'content');
         }
 }
@@ -131,15 +137,16 @@ function route (path, firstNavigation) {
 function enter(user){
     
     window.addEventListener('hashchange', function() {
-        route(actualHash(), false)
+        route(actualHash(), false, user)
     }, false);
 
-    route(actualHash(), true);
+    route(actualHash(), true,user);
 
     //SHOW DEFAULT VIEWS
-    let nav = new Nav();
+    let nav = new Nav(user);
     let footer1 = new Footer();
     let head = new Header();
+    let home1 = new Home();
 
     viewManager.showView(nav, 'nav');
     viewManager.showView(head,'head');
@@ -147,15 +154,7 @@ function enter(user){
 
     //SHOW USER INFO
     let userMailNode = document.querySelector('#userMail');
-    userMailNode.innerHTML = user.email;
-
-    // files handler event 
-    function fileEventHandler(event){
-        let file = event.target.files[0]; 
-       
-        storage(file);
-    }
-    document.querySelector('#file').addEventListener('change',fileEventHandler);
+    //userMailNode.innerHTML = user.email;
 }
 
 

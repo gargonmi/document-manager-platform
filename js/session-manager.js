@@ -1,6 +1,8 @@
 
 export let session;
 import { View } from './view.js';
+import { storage ,database} from './storeManager.js'
+
 
 export class UserLogin extends View {
 
@@ -44,5 +46,16 @@ session = {
     logout(){
         firebase.auth().signOut();
     },
+
+    async updatePhotoUrl(file,user){
+        
+        let filePath = await storage.loadFile(file);
+        debugger;
+        let photoUrl = await storage.downloadFile(filePath);
+        database.writeUserUrl(photoUrl);
+        user.updateProfile({
+            photoURL: photoUrl
+        });
+    }
 
 }

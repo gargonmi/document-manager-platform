@@ -34,4 +34,8 @@ export class View {
             this.addEventListeners();
         }
     }
+
+    removeNode () {
+        this._domNode.innerHTML = '';
+    }
 }
