@@ -13,6 +13,25 @@ export const database = {
     get userUid () {
         return this.newUser.child('lumiyiwUodWRJ9vNyVHvducKSJu2');
     },
+
+    getWorkers(){
+        return new Promise(function (resolve){
+            let namesOfWorkers = [];
+            let dbWorkers = new Promise(function(resolve){
+                database.userUid.child('workers').once("value", snapshot => {
+                    resolve(snapshot.val());  
+                })  
+            });
+            dbWorkers.then(data =>{
+                for (let property in data){
+                        namesOfWorkers.push(data[property].worker)
+                }
+
+            resolve(namesOfWorkers);
+            });
+        });
+          
+    },
     readDataSnapshot(section) { 
         
       return new Promise(function(resolve){
@@ -27,8 +46,13 @@ export const database = {
             data.filePath = file.location.path_;
             data.Archivo = file.name ;
         }
-        let newDocumentRef = this.userUid.child(section);
-        newDocumentRef.push(data);
+        let newDocumentKey = this.userUid.child(section).push(data).key();
+        this.userUid.child(section).child(newDocumentKey).update(
+            {
+                key: newDocumentKey
+            }
+        )
+            
         window.toastr.success('Datos añadidos ');
     },
     updateData(key,data,section){

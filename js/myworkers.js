@@ -12,21 +12,18 @@ export class Myworkers extends View {
         this.loading = false;
         const that = this;
         this.section = 'workers';
-        this.columns = [ //Define Table Columns
+        this.columns = [ 
             {title:"Empleado", field:"worker", width:150},
             {title:"Dni", field:"dni", align:"left"},
             {title:"Puesto", field:"position"},
-            {title:"Estado", field:"state", align:"center"},
             {title:"Estado", field:"state", align:"center"},
             {title:"Nivel", field:"level", align:"center"},
             
             {
                 title:"Documentos", align:"center", field:"filePath",
                 formatter: function(){
-                    //cell - the cell component
-                    //formatterParams - parameters set for the column
-                    //onRendered - function to call when the formatter has been rendered
-                    return "<button>Acceder</button>" ; //return the contents of the cell;
+                    
+                    return "<button>Acceder</button>" ; 
                 },
                 cellClick: function(e, cell){
 
@@ -46,7 +43,7 @@ export class Myworkers extends View {
             ${this.loading ? `<div class="spinner">
             <img src="./assets/img/spinner.gif"></div>` :
             `<div class="tabulatorTable"></div>`}
-            <button class="loadFile">Nuevo trabajador</button>
+            <button class="newWorker">Nuevo trabajador</button>
            
             
         </div>  
@@ -58,7 +55,7 @@ export class Myworkers extends View {
     }
 
     addEventListeners () {
-        this.query('.loadFile').addEventListener('click', () => this.showCloseModal()); 
+        this.query('.newWorker').addEventListener('click', () => this.showCloseModal()); 
     }
 
     fileEventHandler(event){
@@ -79,6 +76,7 @@ export class Myworkers extends View {
         this.refreshView();
         // window.app.viewManager.showView(new CreateDocModal(), 'app-modal')
         database.readDataSnapshot(this.section).then(data => {
+
             this.loading = false;
             this.refreshView();
             let tableObj = new Tabla(this.columns);
@@ -98,11 +96,13 @@ export class Myworkers extends View {
                 filteredData.push(data[property])
             }
         }
+        console.log(filteredData);
         return filteredData;
     }
 
     showCloseModal(event,cell){
-        let modal = new Modal(event,cell);
+        
+        let modal = new Modal(event,cell,'workers');
         window.app.viewManager.showView(modal,'modal');
         modal.onClose.then((success) => {
             if (success) {
@@ -112,7 +112,7 @@ export class Myworkers extends View {
     }
 }
 
-    // static function
+    
 
 
 

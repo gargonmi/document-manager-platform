@@ -6,12 +6,14 @@ import { database } from './storeManager.js';
 import { Modal } from './modal.js';
 import { ViewManager } from './view-manager.js';
 
+
 export class Mydocs extends View {
     constructor () {
         super();
         this.loading = false;
         const that = this;
-        this.section = 'documents';
+        this.workers = [];
+        this.section = 'docs';
         this.columns = [ //Define Table Columns
             {title:"Documento", field:"Documento", width:150},
             {title:"Tipo de documento", field:"Tipo de documento", align:"left"},
@@ -29,9 +31,8 @@ export class Mydocs extends View {
                 },
                 cellClick: function(e, cell){
 
-                    that.showCloseModal(e,cell);
-                    console.log(cell.getRow().getData());
-                    
+                    that.showCloseModal(cell,that.section,that.workers);
+                    console.log(that.workers);
                 }
             }
         ];
@@ -53,6 +54,7 @@ export class Mydocs extends View {
     }
     
     afterMount () {
+        database.getWorkers().then((workers) => this.workers = workers);
         this.drawTable();
     }
 
@@ -76,7 +78,6 @@ export class Mydocs extends View {
     drawTable(){
         this.loading = true;
         this.refreshView();
-        // window.app.viewManager.showView(new CreateDocModal(), 'app-modal')
         database.readDataSnapshot(this.section).then(data => {
             this.loading = false;
             this.refreshView();
@@ -100,8 +101,8 @@ export class Mydocs extends View {
         return filteredData;
     }
 
-    showCloseModal(event,cell){
-        let modal = new Modal(event,cell);
+    showCloseModal(cell,modalType,workers){
+        let modal = new Modal(cell,modalType,workers);
         window.app.viewManager.showView(modal,'modal');
         modal.onClose.then((success) => {
             if (success) {
@@ -111,11 +112,7 @@ export class Mydocs extends View {
     }
 }
 
-    // static function
-
-
-
 let changes = database.userUid.on("value", snapshot => {
     window.toastr.success('La base de datos ha cambiado');
-   // Mydocs.refreshView();
+   
     });
