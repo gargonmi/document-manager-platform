@@ -1,7 +1,6 @@
 
 import { View } from './view.js';
 import { storage } from './storeManager.js';
-import { Tabla } from './tables.js';
 import { database } from './storeManager.js';
 import { Modal } from './modal.js';
 import { ViewManager } from './view-manager.js';
@@ -20,15 +19,15 @@ export class Myworkers extends View {
             {title:"Nivel", field:"level", align:"center"},
             
             {
-                title:"Documentos", align:"center", field:"filePath",
+                title:"Editar", align:"center", field:"filePath",
                 formatter: function(){
                     
-                    return "<button>Acceder</button>" ; 
+                    return "<button>Editar</button>" ; 
                 },
-                cellClick: function(e, cell){
+                cellClick: function(e,cell){
 
-                    that.showCloseModal(e,cell);
-                    console.log(cell.getRow().getData());
+                    that.showCloseModal(cell,that.section);
+                 
                     
                 }
             }
@@ -52,23 +51,11 @@ export class Myworkers extends View {
     
     afterMount () {
         this.drawTable();
+        database.getWorkerKey('Fernando Flores');
     }
 
     addEventListeners () {
-        this.query('.newWorker').addEventListener('click', () => this.showCloseModal()); 
-    }
-
-    fileEventHandler(event){
-        let file = event.target.files[0];
-        let metadata = {
-            'Documento': document.querySelector('.newDocumentName').value,
-            'Tipo de documento': document.querySelector('.newDocumentType').value,
-            'Asociado a': document.querySelector('.newDocumentLink').value,
-            'Fecha del documento': document.querySelector('.newDocumentDate').value,
-            'Tiempo para que expire': document.querySelector('.newDocumentExpire').value
-        }
-        storage.loadFile(file,metadata).then(()=>this.drawTable());
-        
+        this.query('.newWorker').addEventListener('click', () => this.showCloseModal(null,this.section)); 
     }
 
     drawTable(){
@@ -76,11 +63,15 @@ export class Myworkers extends View {
         this.refreshView();
         // window.app.viewManager.showView(new CreateDocModal(), 'app-modal')
         database.readDataSnapshot(this.section).then(data => {
-
             this.loading = false;
             this.refreshView();
-            let tableObj = new Tabla(this.columns);
-            tableObj.formatTabulator(this.dataFormat(data));
+            let table = new Tabulator(".tabulatorTable", {
+                height:false, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+                data:this.dataFormat(data), //assign data to table
+                layout:"fitColumns", //fit columns to width of table (optional)
+                columns:this.columns,
+            });
+          
         });
         this.remove;
     }
@@ -96,13 +87,13 @@ export class Myworkers extends View {
                 filteredData.push(data[property])
             }
         }
-        console.log(filteredData);
+        
         return filteredData;
     }
 
-    showCloseModal(event,cell){
+    showCloseModal(cell,modalType){
         
-        let modal = new Modal(event,cell,'workers');
+        let modal = new Modal(cell,modalType);
         window.app.viewManager.showView(modal,'modal');
         modal.onClose.then((success) => {
             if (success) {
@@ -118,5 +109,13 @@ export class Myworkers extends View {
 
 let changes = database.userUid.on("value", snapshot => {
     window.toastr.success('La base de datos ha cambiado');
-   // Mydocs.refreshView();
     });
+
+let workerChanges = database.workers.on('child_changed', function(data) {
+    //console.log('data : ', data);
+    //console.log('data key : ' ,data.key());
+    //console.log('data val : ' ,data.val());
+    //console.log('data worker name : ', data.val().worker);
+    database.getWorkerKey('Fernando Flores');
+    
+  });

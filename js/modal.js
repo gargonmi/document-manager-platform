@@ -56,11 +56,21 @@ export class Modal extends View {
                 }
                 break;
             case 'workers':
-            this.query('.makeWorker').addEventListener('click', () => { 
+            if (this.cell === null){
+                this.query('.makeWorker').addEventListener('click', () => { 
                  
-                this.newWorkerHandler();
-                this.removeNode();
-            });
+                    this.newWorkerHandler();
+                    this.removeNode();
+                });
+            }
+            if(this.cell){
+                this.query('.updateWorker').addEventListener('click', () => { 
+                     
+                    this.updateWorkerHandler();
+                    this.removeNode();
+                });
+               
+            }
                 break;
         }
         
@@ -72,7 +82,7 @@ export class Modal extends View {
         let metadataInputs = {
             'Documento': document.querySelector('.newDocumentName').value,
             'Tipo de documento': document.querySelector('.newDocumentType').value,
-            'Asociado a': document.querySelector('.newDocumentLink').value,
+            'Asociado a': this.workerKeyFind(document.querySelector('.newDocumentLink').value),
             'Fecha del documento': document.querySelector('.newDocumentDate').value,
             'Tiempo para que expire': document.querySelector('.newDocumentExpire').value   
         }
@@ -84,13 +94,14 @@ export class Modal extends View {
             let metadata = {
                 'Documento': document.querySelector('.newDocumentName').value,
                 'Tipo de documento': document.querySelector('.newDocumentType').value,
-                'Asociado a': document.querySelector('.newDocumentLink').value,
+                'Asociado a':this.workerKeyFind(document.querySelector('.newDocumentLink').value),
                 'Fecha del documento': document.querySelector('.newDocumentDate').value,
                 'Tiempo para que expire': document.querySelector('.newDocumentExpire').value   
             };
             metadata.filePath = this.cell.getValue();
             metadata.Archivo = this.doc.Archivo;
             this.workersOptions(this.workers);
+            console.log(metadata);
             database.updateData(this.doc.key,metadata,'docs');
             this.resolveOnClose(true);
         }
@@ -105,7 +116,20 @@ export class Modal extends View {
         }
 
     }
+    updateWorkerHandler(){
 
+        let metadata = {
+            
+                'worker': document.querySelector('.newWorkerName').value,
+                'dni': document.querySelector('.newWorkerDNI').value,
+                'position': document.querySelector('.newWorkerFunction').value,
+                'level': document.querySelector('.newWorkerLevel').value,   
+              
+        };
+        database.updateData(this.doc.key,metadata,'workers');
+        this.resolveOnClose(true);
+
+    }
     newWorkerHandler(){
         let workerData = {
             'worker': document.querySelector('.newWorkerName').value,
@@ -119,14 +143,27 @@ export class Modal extends View {
 
     }
 
+    workerKeyFind(workerName){
+        let workerKey;
+        this.workers.forEach((value) =>{
+            if (workerName === value.worker){
+                workerKey = value.workerKey }
+        });
+        return workerKey;
+    }
+
     workersOptions(workers){
         
-        let workerOptions = workers.map(value =>{
-             return '<option>' + value + '</option>' })
-           
+        let workerOptions = workers.map((value,index,arr) =>{
+             return '<option>' + value.worker + '</option>' })
+        console.log(workerOptions);  
         return workerOptions.toString();
            
     }
+
+    
+    
+    
 
     render () {
         switch (this.modalType) {
@@ -170,18 +207,19 @@ export class Modal extends View {
                 <div class="app-modal-content">
                     
                         <div class="modalTitle">
-                            <h3>Añadir nuevo trabajador</h3>
+                        <h3>${this.cell ? this.doc.worker : 'Añadir nuevo trabajador'}</h3>
+                            
                     
                         </div>
                         <div class="inputArea">
-                            <input type="text" size=30 class="newWorkerName" placeholder="Nombre del trabajador"  />
-                            <input type="text" size=30 class="newWorkerDNI" placeholder="DNI" />
-                            <input type="text" size=30 class="newWorkerFunction" placeholder="Puesto que desempeña" />
-                            <input type="text" size=5 class="newWorkerLevel" placeholder="Nivel"/>
+                            <input type="text" size=30 class="newWorkerName" placeholder="Nombre del trabajador" value="${this.cell ? this.doc.worker : ''}" />
+                            <input type="text" size=30 class="newWorkerDNI" placeholder="DNI" value="${this.cell ? this.doc.dni : ''}"/>
+                            <input type="text" size=30 class="newWorkerFunction" placeholder="Puesto que desempeña" value="${this.cell ? this.doc.position : ''}" />
+                            <input type="text" size=5 class="newWorkerLevel" placeholder="Nivel" value="${this.cell ? this.doc.level : ''}"/>
                         </div>
                         <div class="buttonsArea">
-                           
-                            <button class="makeWorker">Crear</button> 
+                            ${this.cell ? '<button class="updateWorker">Actualizar</button>'  : '<button class="makeWorker">Crear</button> '}
+                            
                             <button class="closeModal">Cerrar</button>
                         </div>
                         

@@ -13,20 +13,37 @@ export const database = {
     get userUid () {
         return this.newUser.child('lumiyiwUodWRJ9vNyVHvducKSJu2');
     },
+    get workers () {
+        return this.userUid.child('workers');
+    },
+
+    getWorkerKey(workerName){
+        let orderByNameRef = this.workers.orderByChild('worker').equalTo(workerName);
+        orderByNameRef.on("value",(node)=>{
+            console.log(node.val());
+            
+        });
+
+    // return workerKey 
+    },
+
+    getWorkerName(workerKey){
+
+        //return workerName
+    },
 
     getWorkers(){
         return new Promise(function (resolve){
             let namesOfWorkers = [];
             let dbWorkers = new Promise(function(resolve){
-                database.userUid.child('workers').once("value", snapshot => {
+                database.workers.once("value", snapshot => {
                     resolve(snapshot.val());  
                 })  
             });
-            dbWorkers.then(data =>{
-                for (let property in data){
-                        namesOfWorkers.push(data[property].worker)
+            dbWorkers.then(data =>{    
+                for (let key in data){
+                        namesOfWorkers.push({ ...data[key], workerKey: key });
                 }
-
             resolve(namesOfWorkers);
             });
         });

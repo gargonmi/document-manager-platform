@@ -8,7 +8,7 @@ import { Mydocs } from './mydocs.js';
 import { Myworkers } from './myworkers.js';
 import { Mysites } from './mysites.js';
 import { Profiles } from './profile.js';
-import { Tabla } from './tables.js';
+
 import { database, storage} from './storeManager.js';
 import { inicializefirebase } from './storeManager.js';
 import { session } from './session-manager.js';

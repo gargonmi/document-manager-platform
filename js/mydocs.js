@@ -1,7 +1,6 @@
 
 import { View } from './view.js';
 import { storage } from './storeManager.js';
-import { Tabla } from './tables.js';
 import { database } from './storeManager.js';
 import { Modal } from './modal.js';
 import { ViewManager } from './view-manager.js';
@@ -17,7 +16,16 @@ export class Mydocs extends View {
         this.columns = [ //Define Table Columns
             {title:"Documento", field:"Documento", width:150},
             {title:"Tipo de documento", field:"Tipo de documento", align:"left"},
-            {title:"Asociado a ", field:"Asociado a"},
+            {title:"Asociado a ", field:"Asociado a",
+                formatter:function(cell){
+                    for(let i = 0 ; i < that.workers.length ; i++){
+                        if (cell.getValue() === that.workers[i].workerKey){
+                            return that.workers[i].worker;
+                        }
+                    }
+                }
+                
+            },
             {title:"Fecha del documento", field:"Fecha del documento", sorter:"date", align:"center"},
             {title:"Tiempo para que expire", field:"Tiempo para que expire", sorter:"date", align:"center"},
             {title:"Archivo", field:"Archivo", sorter:"date", align:"center"},
@@ -30,9 +38,9 @@ export class Mydocs extends View {
                     return "<button>Gestionar</button>" ; //return the contents of the cell;
                 },
                 cellClick: function(e, cell){
-
+                    
                     that.showCloseModal(cell,that.section,that.workers);
-                    console.log(that.workers);
+                    
                 }
             }
         ];
@@ -54,12 +62,16 @@ export class Mydocs extends View {
     }
     
     afterMount () {
-        database.getWorkers().then((workers) => this.workers = workers);
-        this.drawTable();
+        database.getWorkers().then((workers) => {
+            this.workers = workers;
+            this.drawTable(this.workers);
+        });
+        
+
     }
 
     addEventListeners () {
-        this.query('.loadFile').addEventListener('click', () => this.showCloseModal()); 
+        this.query('.loadFile').addEventListener('click', () => this.showCloseModal(null,this.section,this.workers)); 
     }
 
     fileEventHandler(event){
@@ -75,19 +87,36 @@ export class Mydocs extends View {
         
     }
 
-    drawTable(){
+    drawTable(workers){
         this.loading = true;
         this.refreshView();
+        let name;
         database.readDataSnapshot(this.section).then(data => {
             this.loading = false;
             this.refreshView();
-            let tableObj = new Tabla(this.columns);
-            tableObj.formatTabulator(this.dataFormat(data));
+            let table = new Tabulator(".tabulatorTable", {
+                height:false, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+                data:this.dataFormat(data), //assign data to table
+                layout:"fitColumns", //fit columns to width of table (optional)
+                columns:this.columns,
+                groupBy:'Asociado a'
+            });
+            table.setGroupHeader(function(value, count, data, group){
+               
+                workers.forEach((item)=> {
+                    if (item.workerKey === value){name = item.worker}
+                });
+                return name ; //all groups with more than three rows start open, any with three or less start closed
+            });
+          
         });
         this.remove;
     }
 
-    
+    headerGroupNames(value,count,data,group){
+        
+        return 'trabajador';
+    }
 
     dataFormat(data){
         let filteredData=[];
@@ -98,6 +127,7 @@ export class Mydocs extends View {
                 filteredData.push(data[property])
             }
         }
+        
         return filteredData;
     }
 
