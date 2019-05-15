@@ -12,9 +12,11 @@ export class Header extends View {
     
     render () {
         return `
-        <div class="header">
-        <h1>CAE-manager</h1>
-        </div>
+        
+        <img id="wizard" src="./assets/img/wizard.svg"></img>
+        <h1>caeWizard</h1>
+       
+        
         `
     }
 }

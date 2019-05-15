@@ -45,6 +45,10 @@ export class ViewManager {
 
         view.mount(this.sections[sectionName]);
     }
-    
+
+    removeSection(sectionName){
+        this.sections[sectionName].innerHTML = '';
+
+    }
 }
 

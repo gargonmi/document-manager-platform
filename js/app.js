@@ -8,7 +8,6 @@ import { Mydocs } from './mydocs.js';
 import { Myworkers } from './myworkers.js';
 import { Mysites } from './mysites.js';
 import { Profiles } from './profile.js';
-
 import { database, storage} from './storeManager.js';
 import { inicializefirebase } from './storeManager.js';
 import { session } from './session-manager.js';
@@ -16,10 +15,14 @@ import { UserLogin } from './session-manager.js';
 import { UserProfile } from './user-profile.js';
 import { Modal } from './modal.js';
 
+let footer;
+let head;
+let nav;
+
+let fire = inicializefirebase();
 
 
 let wrapper = document.querySelector('.wrapper');
-
 let viewManager = new ViewManager({
     nav: '.app-nav',
     content: '.app-content',
@@ -29,79 +32,69 @@ let viewManager = new ViewManager({
     modal:'.app-modal'
 })
 
+
 window.app = {
-    viewManager
+    viewManager,
+    firstEnter: true,
+    login: false
 }
 
+//NO LOGIN STATE
 
-inicializefirebase();
-
-//INIT 
-function init(){
-    
-    //session.logout();
-    let userLogin = new UserLogin();
-    viewManager.showView(userLogin, 'login');
-    document.querySelector('#submitLogin').addEventListener('click',loginHandler);
-    login()
-   
-}
-
-// LOGIN EVENT
-function loginHandler(event){
-    
-    if (event.target.id === "submitLogin"){
-       let mail = document.querySelector('.inputMail').value;
-       let pass = document.querySelector('.inputPass').value;
-       login(mail,pass);
+function logger(){
+    let login = new UserLogin();
+    if (window.app.firstEnter){
+        console.log('es la primera entrada');
+        viewManager.showView(login,'login')
     }
-}
+    if (!window.app.firstEnter){
+        console.log('no es la primera entrada');
+        window.removeEventListener('hashchange', route);
+        window.location.hash = '';
+        viewManager.removeSection('content');
+        viewManager.removeSection('footer');
+        viewManager.removeSection('head');
+        viewManager.removeSection('nav');
+        viewManager.showView(login,'login')
+    }
+};
 
-//LOGIN
 
-function login(email,pass){
-    
-    //session.loginFire(email,pass);
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            // User is signed in.
-            var displayName = user.displayName;
-            var email = user.email;
-            var emailVerified = user.emailVerified;
-            var photoURL = user.photoURL;
-            var isAnonymous = user.isAnonymous;
-            var uid = user.uid;
-            var providerData = user.providerData;
 
-            if (document.body.contains(document.querySelector('.app-login'))){
-                wrapper.removeChild(document.querySelector('.app-login'));}
-               
-            enter(user);
-        }
+fire.auth().onAuthStateChanged(function(user) {
 
+    if (user) {
         
-    });
-        
-    
-}
+        console.log('estas logeado');
+        window.location.hash = '';
+        window.app.firstEnter = false;  
+        window.location.hash = 'home';
+        window.addEventListener('hashchange', route);
+    }
+    else{
+        console.log('no estas logeado');
+        logger();
+    }
+});
 
-function actualHash () {
-    return window.location.hash.substr(1);
-}
 
-// TO ENTER 
 
-function route (path, firstNavigation,user) {
-    let viewToShow
 
-    switch (path) {
+            // enrutar
 
-        case 'dashboard':
+function route () {
+    console.log('hash cambio y entramos en route');
+    let viewToShow;
+
+    switch (window.location.hash.substr(1)) {
+
+        case 'home':
             let home1 = new Home();
             viewToShow = home1;
             break;
         case 'perfil':
-            viewToShow = profiles;
+            var userProfile = new UserProfile(fire.auth().currentUser)
+            viewToShow = userProfile;
             break;
         case 'documentos':
             let mydocs = new Mydocs();
@@ -116,49 +109,34 @@ function route (path, firstNavigation,user) {
             viewToShow = mysites;
             break;
         case 'configuracion':
-            
-            let userProfile = new UserProfile(user)
             viewToShow = userProfile;
             break;
-        case 'logout': 
-            location.reload(true);
-            break;
         }
 
-        if (viewToShow) {
-            viewManager.showView(viewToShow, 'content');
-        } else if (firstNavigation) {
-            let home1 = new Home;
-            viewManager.showView(home1, 'content');
+        if(!footer){
+            footer = new Footer();
         }
+        if(!head){
+            head = new Header();
+        }
+        if(!nav){
+            nav = new Nav(fire.auth().currentUser);
+        }
+
+        viewManager.showView(footer, 'footer');
+        viewManager.showView(nav, 'nav');
+        viewManager.showView(head, 'head');
+
+        viewManager.showView(viewToShow, 'content');
+        
+           
+       
 }
 
 
-function enter(user){
-    
-    window.addEventListener('hashchange', function() {
-        route(actualHash(), false, user)
-    }, false);
-
-    route(actualHash(), true,user);
-
-    //SHOW DEFAULT VIEWS
-    let nav = new Nav(user);
-    let footer1 = new Footer();
-    let head = new Header();
-    let home1 = new Home();
-
-    viewManager.showView(nav, 'nav');
-    viewManager.showView(head,'head');
-    viewManager.showView(footer1,'footer');
-
-    //SHOW USER INFO
-    let userMailNode = document.querySelector('#userMail');
-    //userMailNode.innerHTML = user.email;
-}
 
 
-window.onload = init();
+
 
 
  

@@ -15,7 +15,7 @@ export class UserLogin extends View {
         return `
         
             <div class="login">
-                <div><p><h2> SECURITY MANAGER </h2></p>
+                <div><img id="loginIcon" src="./assets/img/wizard.svg"></img><h2> caeWizard</h2>
                 </div>
                 <div>
                     <p>Inicie sesion para entrar</p>
@@ -25,17 +25,39 @@ export class UserLogin extends View {
                     <p><input class="inputPass" placeholder="password"></p>
                     <button id="submitLogin">login</button>
                 </div>
+                <p><div class="errors"></div></p>
             </div>    
-            <p><div class="errors"></div></p>
+            
         
         `
+    }
+    addEventListeners(){
+        
+
+        this.query('#submitLogin').addEventListener('click',this.login);
+    }
+
+
+    login(){
+        
+        let email = document.querySelector('.inputMail').value;
+        let pass = document.querySelector('.inputPass').value;
+
+        session.loginFire(email, pass).then((userCredential)=>{
+            console.log("promesa de login resuelta");
+            window.app.viewManager.removeSection('login');
+            
+        }).catch(() => {
+            
+        });
+          
     }
 }
 
 session = {
 
     loginFire(email,pass){
-        firebase.auth().signInWithEmailAndPassword(email, pass).catch(function(error) {
+       return firebase.auth().signInWithEmailAndPassword(email, pass).catch(function(error) {
             // Handle Errors here.
             let errorCode = error.code;
             let errorMessage = error.message; 

@@ -33,11 +33,18 @@ export class Modal extends View {
             });
         switch(this.modalType){
             case 'docs':
-                if (fileLoader != null){
+                if (fileLoader != null && !this.cell){
                     fileLoader.addEventListener('change', () => this.fileEventHandler(event));
                 }
                 
+                
                 if(this.cell){
+                    fileLoader.addEventListener('change', () => {
+                        operation = "fileUpdate";
+                        this.modifyDataHandler(operation);
+                    
+                    });
+
                     this.query('.updateFile').addEventListener('click', () => { 
                         operation = 'update'; 
                         this.modifyDataHandler(operation);
@@ -49,7 +56,7 @@ export class Modal extends View {
                         this.removeNode();
                     });
                     this.query('.downloadFile').addEventListener('click', () => { 
-                 
+                        
                         storage.downloadFile(this.cell.getValue()).then((fileUrl)=>window.open(fileUrl));
                         this.removeNode();
                     });
@@ -101,7 +108,6 @@ export class Modal extends View {
             metadata.filePath = this.cell.getValue();
             metadata.Archivo = this.doc.Archivo;
             this.workersOptions(this.workers);
-            console.log(metadata);
             database.updateData(this.doc.key,metadata,'docs');
             this.resolveOnClose(true);
         }
@@ -109,12 +115,26 @@ export class Modal extends View {
         if(operation === 'delete'){
             if(confirm(`Seguro que quieres borrar de la base de datos: ${this.doc.Documento} ? 
                 Esta operacion es irreversible...` )){
-                database.deleteDocument(this.doc.key);
-                storage.deleteFile(this.doc.filePath)
+                database.deleteDocument(this.doc.key,this.section);
+                storage.deleteFile(this.doc.filePath);
                 this.resolveOnClose(true);
             }
         }
-
+        if(operation === 'fileUpdate'){
+            let file = event.target.files[0];
+            
+            if(confirm(`Esta operacion eliminara el archivo: ${this.doc.Archivo} y  
+                guardara en su lugar ${file.name}  ` )){
+                storage.deleteFile(this.doc.filePath);
+                storage.loadFile(file).then(()=>{
+                    let metadata = {};
+                    metadata.Archivo = file.name;
+                    database.updateData(this.doc.key,metadata,'docs');
+                    this.resolveOnClose(true);    
+                })
+                
+            }
+        }
     }
     updateWorkerHandler(){
 
@@ -155,8 +175,7 @@ export class Modal extends View {
     workersOptions(workers){
         
         let workerOptions = workers.map((value,index,arr) =>{
-             return '<option>' + value.worker + '</option>' })
-        console.log(workerOptions);  
+             return '<option>' + value.worker + '</option>' }) 
         return workerOptions.toString();
            
     }

@@ -9,7 +9,9 @@ export class Footer extends View {
     render () {
         return `
         <div class="footer">
-        <p><h3>Contacto   Ayuda   Sobre security manager</h3></p>
+        <p><h3>Contacto</h3></p>
+         <p><h3>Ayuda</h3></p>
+         <p><h3>Acerca de caeWizard</h3></p> 
         </div>
         `
     }

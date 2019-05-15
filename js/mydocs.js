@@ -30,12 +30,12 @@ export class Mydocs extends View {
             {title:"Tiempo para que expire", field:"Tiempo para que expire", sorter:"date", align:"center"},
             {title:"Archivo", field:"Archivo", sorter:"date", align:"center"},
             {
-                title:"Gestionar", align:"center", field:"filePath",
+                title:"Editar", align:"center", field:"filePath",
                 formatter: function(){
                     //cell - the cell component
                     //formatterParams - parameters set for the column
                     //onRendered - function to call when the formatter has been rendered
-                    return "<button>Gestionar</button>" ; //return the contents of the cell;
+                    return "<button>Editar</button>" ; //return the contents of the cell;
                 },
                 cellClick: function(e, cell){
                     
@@ -83,7 +83,7 @@ export class Mydocs extends View {
             'Fecha del documento': document.querySelector('.newDocumentDate').value,
             'Tiempo para que expire': document.querySelector('.newDocumentExpire').value
         }
-        storage.loadFile(file,metadata).then(()=>this.drawTable());
+        storage.loadFile(file,metadata).then(()=>this.drawTable(this.workers));
         
     }
 
@@ -113,11 +113,6 @@ export class Mydocs extends View {
         this.remove;
     }
 
-    headerGroupNames(value,count,data,group){
-        
-        return 'trabajador';
-    }
-
     dataFormat(data){
         let filteredData=[];
         
@@ -136,7 +131,7 @@ export class Mydocs extends View {
         window.app.viewManager.showView(modal,'modal');
         modal.onClose.then((success) => {
             if (success) {
-                this.drawTable();
+                this.drawTable(this.workers);
             }
         });
     }

@@ -36,7 +36,7 @@ export class UserProfile extends View {
                     <input type="text" size=20 class="newCompanyTel" placeholder="TEL"/>
                     <p><button class="saveCompany">Guardar</button></p>
                 </div>
-                <div class="companysArea">
+                <div id="companysArea">
             
                 </div>
             </div>
@@ -47,11 +47,11 @@ export class UserProfile extends View {
     }
     addEventListeners () {
         this.query('#photoFile').addEventListener('change', () => session.updatePhotoUrl(event.target.files[0],this.user)); 
-        this.query('.saveCompany').addEventListener('click', this.writeCompany);
+        this.query('.saveCompany').addEventListener('click',() => this.writeCompany());
     }
 
     afterMount(){
-        //this.getCompanys(this.section);
+        this.getCompanys(this.section);
     }
 
     writeCompany(){
@@ -62,16 +62,40 @@ export class UserProfile extends View {
             'companyTel' : document.querySelector('.newCompanyTel').value,
         };
         console.log(companyData);
+        console.log(this.section);
         database.writeData(companyData,this.section);
+        this.getCompanys(this.section);
+        
 
     }
-    /*
+    
     getCompanys(section){
         database.readDataSnapshot(section).then(companys => {
-            this.query('.companysArea').innerText = companys;
-            console.log(companys);
+            let divCompany;
+            if (divCompany != null){
+                this.query('#companysArea').removeChild(divCompany);
+                divCompany = null; 
+            }
+            divCompany = document.createElement('div');
+            divCompany.innerHTML = this.dataCompanyFormat(companys);
+            this.query('#companysArea').appendChild(divCompany);
+            
         });   
     }
-    */
+    dataCompanyFormat(companyData){
+        let companyDataFormated = [];
+        for (let prop in companyData){
+
+           companyDataFormated.push(`
+           <h2> ${companyData[prop].companyName}</h2>
+                ${companyData[prop].companyNif}</br> 
+                ${companyData[prop].companyDirection}</br> 
+                ${companyData[prop].companyTel} 
+           `);
+       
+        }
+        return companyDataFormated.toString();
+    }
+    
     
 }

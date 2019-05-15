@@ -80,8 +80,8 @@ export const database = {
         databaseRef.update(updates);
         window.toastr.success('Datos actualizados ');
     },
-    deleteDocument(key){
-        let docToRemove = this.userUid.documents.child(key);
+    deleteDocument(key,section){
+        let docToRemove = this.userUid.child(section).child(key);
         docToRemove.remove();
         window.toastr.success('Documento eliminado');
     },
@@ -96,8 +96,7 @@ export const database = {
 
 
 export function inicializefirebase () {
- // Initialize Firebase
-  // TODO: Replace with your project's customized code snippet
+  
   var config = {
     apiKey: "AIzaSyAw_zg3_NZO4VEXDZYMLypf9PM3I3RSVXo",
     authDomain: "myfirebase-magg.firebaseapp.com",
@@ -105,9 +104,9 @@ export function inicializefirebase () {
     projectId: "myfirebase-magg",
     storageBucket: "myfirebase-magg.appspot.com",
     messagingSenderId: "432197009292"
-  };
-  
-  window.firebase.initializeApp(config);
+    };
+    
+    return window.firebase.initializeApp(config);
 }
 
 
@@ -138,7 +137,7 @@ export const storage = {
     downloadFile(fileRef){
         return new Promise(function (resolve){
             const firebaseStorage = firebase.storage();
-            let fileToDownload = fileRef;
+            let fileToDownload = firebaseStorage.ref(fileRef);
             fileToDownload.getDownloadURL().then(function(downloadUrl){
             resolve (downloadUrl);
             })
@@ -151,11 +150,11 @@ export const storage = {
         fileToDelete.delete()
         .then((success)=>{
             window.toastr.success('Archivo eliminado');
-            console.log(success);
+            
         })
         .catch((error)=>{
             window.toastr.error(error.message);
-            console.log(error)
+            
             });
         
     }
